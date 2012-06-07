@@ -51,6 +51,7 @@ print_format( unsigned char out, char *fmt, ... )
 {
 	va_list args;
 
+	(void)out;
 	va_start( args, fmt );
 	vsprintf( pfs, fmt, args );
 	sspput_string( out, pfs );
@@ -64,7 +65,7 @@ print_format( unsigned char out, char *fmt, ... )
 #include <ctype.h>
 
 static char strmap[ 2 ];
-static unsigned char *sspmap[] =
+static char *sspmap[] =
 {
 	"-", 	/* NUL 	- 00 */
 	"-", 	/* SOH 	- 01 */
@@ -196,7 +197,7 @@ ssp_match( void )
 												pbr->patt, 
 												CB( pnd )->name ));
 	if( pbr->bract )
-		( *pbr->bract )( pos + 1 );
+		( *pbr->bract )( (unsigned char)( pos + 1 ) );
 
 	state = SSP_IDLE;
 	if( pbr->target != NULL )
@@ -211,9 +212,9 @@ static
 int
 ssp_is_equal( unsigned char c )
 {
-	int r;
+	int r = *( ppatt - 1 );
 
-	if( r = ( *( ppatt - 1 ) == c ) )
+	if( r == c )
 		sspdprint(( 0, "\tRepeat input (match pos = %2d)\n", pos ));
 
 	return r;

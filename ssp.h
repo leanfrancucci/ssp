@@ -71,7 +71,7 @@
 
 #define SSP_CREATE_BR_TABLE( name )										\
 																		\
-								static const SSP_BR_T name##_tbl[]={
+								const SSP_BR_T name##_tbl[]={
 
 /**
  * 	\brief

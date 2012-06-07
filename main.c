@@ -26,6 +26,7 @@ static
 void
 none( unsigned char pos )
 {
+	(void)pos;
 }
 
 
@@ -33,6 +34,7 @@ static
 void
 patt_frm( unsigned char pos )
 {
+	(void)pos;
 	pbuff = buff;
 	ixbuff = 0;
 	printf( "\t%s: expected at least %d characters\n", __FUNCTION__, 
@@ -46,6 +48,7 @@ patt_ok( unsigned char pos )
 {
 	int i;
 
+	(void)pos;
 	printf( "\t%s: #%d ch collected =", __FUNCTION__, ixbuff );
 
 	for( i = 0, pbuff = buff; i < ixbuff; ++i, ++pbuff )
