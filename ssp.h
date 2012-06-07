@@ -74,6 +74,35 @@
 								static const SSP_BR_T name##_tbl[]={
 
 /**
+ * 	\brief
+ *	This macro defines a tree branch or node transition.
+ *
+ *	Example:
+ *	\code
+ *	SSP_CREATE_NORMAL_NODE( root );
+ *	SSP_CREATE_BR_TABLE( root )
+ *		{	"ok",			// pattern "ok"
+ *			NULL, 			// branch action is not used
+ *			&node_ok	},	// next tree node
+ *		{ "no", NULL, &node_no	},
+ *	SSP_END_BR_TABLE
+ *	\endcode
+ *
+ *	\sa
+ *	SSP_BR_T structure definition for more information.
+ *
+ * 	\param patt		pattern to search. String terminated in '\\0'
+ * 	\param bract	pointer to action function. This function is invoked 
+ * 					when the pattern is found. This argument is optional, 
+ * 					thus it could be declared as NULL.
+ * 	\param target	pointer to target node.
+ */
+
+#define SSPBR( patt, bract, target )		\
+						{ (unsigned char*)patt, bract, target }
+
+
+/**
  *	This macro is used to terminate a state transition table.
  */
 
@@ -165,7 +194,7 @@ typedef struct ssp_br_t
 
 	/**
 	 * 	Points to action function.
-	 * 	This function is invoked when a pattern is found.
+	 * 	This function is invoked when the pattern is found.
 	 */
 	SSP_BRA_T bract;
 

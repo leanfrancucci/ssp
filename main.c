@@ -70,29 +70,29 @@ collect( unsigned char c )
 
 SSP_CREATE_NORMAL_NODE( root );
 SSP_CREATE_BR_TABLE( root )
-	{ "ok",			NULL, 			&node_ok	},
-	{ "no",			NULL, 			&node_no	},
+	SSPBR( "ok",		NULL, 		&node_ok	),
+	SSPBR( "no",		NULL, 		&node_no	),
 SSP_END_BR_TABLE
 
 
 SSP_CREATE_NORMAL_NODE( node_ok );
 SSP_CREATE_BR_TABLE( node_ok )
-	{ "frm",		patt_frm, 		&node_trn	},
-	{ "error",		NULL, 			NULL 		},
+	SSPBR( "frm",		patt_frm, 	&node_trn	),
+	SSPBR( "error",		NULL, 		NULL 		),
 SSP_END_BR_TABLE
 
 
 SSP_CREATE_TRN_NODE( node_trn, collect );
 SSP_CREATE_BR_TABLE( node_trn )
-	{ "ok",			patt_ok, 		&root 		},
-	{ "+",			NULL, 			&root 		},
+	SSPBR( "ok",		patt_ok, 	&root 		),
+	SSPBR( "+",			NULL, 		&root 		),
 SSP_END_BR_TABLE
 
 
 SSP_CREATE_NORMAL_NODE( node_no );
 SSP_CREATE_BR_TABLE( node_no )
-	{ "+",			NULL, 			&root 		},
-	{ "-",			patt_frm,		&node_trn	},
+	SSPBR( "+",			NULL, 		&root 		),
+	SSPBR( "-",			patt_frm,	&node_trn	),
 SSP_END_BR_TABLE
 
 
