@@ -212,9 +212,10 @@ static
 int
 ssp_is_equal( unsigned char c )
 {
-	int r = *( ppatt - 1 );
-
-	if( r == c )
+	int r;
+	
+	r = ( *( ppatt - 1 ) == c );
+	if( r )
 		sspdprint(( 0, "\tRepeat input (match pos = %2d)\n", pos ));
 
 	return r;
