@@ -11,7 +11,7 @@
  * 	Debug configurations.
  */
 
-#define SSP_DEBUG						1
+#define SSP_DEBUG						0
 #define SSP_PRINT_FORMAT				1
 #define SSP_PRINT_FORMAT_SIZE			64
 

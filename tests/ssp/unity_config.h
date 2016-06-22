@@ -7,7 +7,7 @@
 
 #define UNITY_EXCLUDE_STDINT_H
 #define UNITY_EXCLUDE_FLOAT
-#define UNITY_OUTPUT_CHAR(a)	outchar(a)
+/* #define UNITY_OUTPUT_CHAR(a)	outchar(a) */
 
 #endif
 

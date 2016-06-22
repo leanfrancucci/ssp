@@ -1,61 +1,41 @@
 /**
  *  \file       all_tests.c
- *  \brief      Test runner of fatfs module (only for learning test)
+ *  \brief      Test runner of ssp module
  */
 
 /* -------------------------- Development history -------------------------- */
 /* -------------------------------- Authors -------------------------------- */
 /* --------------------------------- Notes --------------------------------- */
 /* ----------------------------- Include files ----------------------------- */
+#include <stdio.h>
 #include "unity_fixture.h"
-#include "board.h"
-#include "pin_mux.h"
-#include "putchar.h"
-#include "board.h"
-#include "usbhost.h"
 
 /* ----------------------------- Local macros ------------------------------ */
-#define forever()	for(;;)
-
 /* ------------------------------- Constants ------------------------------- */
 /* ---------------------------- Local data types --------------------------- */
 /* ---------------------------- Global variables --------------------------- */
 /* ---------------------------- Local variables ---------------------------- */
 /* ----------------------- Local function prototypes ----------------------- */
 /* ---------------------------- Local functions ---------------------------- */
-static
-void
-bsp_init( void )
+static void
+waitForKeyPress(void)
 {
-    BOARD_InitPins();
-    BOARD_BootClockRUN();
-    outchar_init();
-    sleep_init();
-    usbhost_init();
-	TST_USBPWR_INIT(LOGIC_USBPWR_OFF);
+    getchar();
 }
 
-static 
-void 
+static void 
 runAllTests(void)
 {
-	RUN_TEST_GROUP(fatfs);
+	RUN_TEST_GROUP(ssp);
 }
 
 /* ---------------------------- Global functions --------------------------- */
 int
-main(void)
+main(int argc, const char *argv[])
 {
-	static int argc;
-	static const char *argv[1];
-
-	argc = 1;
-	argv[0] = "fatfs";
-
-	bsp_init();
 	UnityMain(argc, argv, runAllTests);
 
-	forever();
+	waitForKeyPress();
 	return 0;
 }
 

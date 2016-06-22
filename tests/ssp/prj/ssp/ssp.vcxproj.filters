@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{bf173157-26ec-4d1e-9069-a1963ba99cce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests">
+      <UniqueIdentifier>{cf792341-57ec-4895-b70c-50cba15721e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools">
+      <UniqueIdentifier>{db656a8c-8cf9-4f4f-91a1-a82b3ca19a49}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\ssp">
+      <UniqueIdentifier>{101b977f-35cd-4ba7-86e0-214aa7b1e63c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\ssp\test_runners">
+      <UniqueIdentifier>{d7c98aaf-3c8c-4f8b-a04a-b95d49efc411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tests\ssp\stub">
+      <UniqueIdentifier>{f00f75a7-ace9-484c-8ba1-eb5eed0c881c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="tools\unity">
+      <UniqueIdentifier>{e3aee547-fb12-4da1-b03c-6db96ab6957e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\ssp.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test_ssp.c">
+      <Filter>tests\ssp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test_runners\all_tests.c">
+      <Filter>tests\ssp\test_runners</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\test_runners\test_ssp_runner.c">
+      <Filter>tests\ssp\test_runners</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\tools\unity\fixture\unity_fixture.c">
+      <Filter>tools\unity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\tools\unity\unity.c">
+      <Filter>tools\unity</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\src\ssp.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\unity_config.h">
+      <Filter>tests\ssp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sspcfg.h">
+      <Filter>tests\ssp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\unity\fixture\unity_fixture.h">
+      <Filter>tools\unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\unity\fixture\unity_fixture_internals.h">
+      <Filter>tools\unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\unity\fixture\unity_fixture_malloc_overrides.h">
+      <Filter>tools\unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\unity\unity.h">
+      <Filter>tools\unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\unity\unity_internals.h">
+      <Filter>tools\unity</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

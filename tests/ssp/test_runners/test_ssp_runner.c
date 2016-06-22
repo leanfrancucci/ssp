@@ -1,6 +1,6 @@
 /**
- *  \file       test_fatfs_runner.c
- *  \brief      Test runner of fatfs module (only for learning test)
+ *  \file       test_ssp_runner.c
+ *  \brief      Test runner of ssp module
  */
 
 /* -------------------------- Development history -------------------------- */
@@ -17,14 +17,9 @@
 /* ----------------------- Local function prototypes ----------------------- */
 /* ---------------------------- Local functions ---------------------------- */
 /* ---------------------------- Global functions --------------------------- */
-TEST_GROUP_RUNNER(fatfs)
+TEST_GROUP_RUNNER(ssp)
 {
-	RUN_TEST_CASE(fatfs, MountDrive);
-	RUN_TEST_CASE(fatfs, MountDriveFails);
-	RUN_TEST_CASE(fatfs, OpenFile);
-	RUN_TEST_CASE(fatfs, OpenFileFails);
-	RUN_TEST_CASE(fatfs, WriteFile);
-	RUN_TEST_CASE(fatfs, WriteFileFails);
+	RUN_TEST_CASE(ssp, first);
 }
 
 /* ------------------------------ End of file ------------------------------ */
