@@ -1,80 +1,78 @@
 /**
- * 	\file ssp.h
- *
- * 	String search parser interface.
+ *  \file   ssp.h
+ *  \brief  String Search Parser interface.
  */
 
-
+/* -------------------------- Development history -------------------------- */
+/* -------------------------------- Authors -------------------------------- */
+/* --------------------------------- Notes --------------------------------- */
+/* --------------------------------- Module -------------------------------- */
 #ifndef __SSP_H__
 #define __SSP_H__
 
-
+/* ----------------------------- Include files ----------------------------- */
 #include "sspcfg.h"
 
-
-#if SSP_EN_NODE_NAME == 1
-	#define mkbase(t,n)				{t,n##_tbl,#n}
-#else
-	#define mkbase(t,n)				{t,n##_tbl}
+/* ---------------------- External C language linkage ---------------------- */
+#ifdef __cplusplus
+extern "C" {
 #endif
 
+/* --------------------------------- Macros -------------------------------- */
+#if SSP_EN_NODE_NAME == 1
+#define MK_BASE(t,n)    {t, n##_tbl, #n}
+#else
+#define MK_BASE(t,n)    {t, n##_tbl}
+#endif
 
 /**
+ *  \brief
  *	This macro creates a normal node.
  *
  *	\note
+ *	See SSPNodeNormal structure definition for more information.
  *
- *	See SSP_NNORM_T structure definition for more information.
- *
- * 	\param name		node name. Represents a normal node structure.
+ *  \param name		node name. Represents a normal node structure.
  */
-
-#define SSP_CREATE_NORMAL_NODE( name )									\
-																		\
-								extern const SSP_BR_T name##_tbl[];		\
-																		\
-								const SSP_NNORM_T name =				\
-								{										\
-									mkbase(SSP_NNORM,name)				\
-								}
-
+#define SSP_CREATE_NORMAL_NODE(name) \
+            extern const SSPBranch name##_tbl[]; \
+            const SSPNodeNormal name = \
+            { \
+                MK_BASE(SSP_NNORM, name) \
+            }
 
 /**
+ *  \brief
  *	This macro creates a transparent node.
  *
  *	\note
+ *	See SSPNodeTrn structure definition for more information.
  *
- *	See SSP_NTRN_T structure definition for more information.
- *
- * 	\param name		node name. Represents a transparent node structure.
- * 	\param c		pointer to collection action. This argument is 
+ *  \param name		node name. Represents a transparent node structure.
+ *  \param c		pointer to collection action. This argument is
  *					optional, thus it could be declared as NULL.
  */
-
-#define SSP_CREATE_TRN_NODE( name, c )									\
-																		\
-								extern const SSP_BR_T name##_tbl[];		\
-																		\
-								const SSP_NTRN_T name =					\
-								{										\
-									mkbase(SSP_NTRN,name),				\
-									c									\
-								}
-
+#define SSP_CREATE_TRN_NODE(name, c) \
+            extern const SSPBranch name##_tbl[]; \
+            const SSPNodeTrn name = \
+            { \
+                MK_BASE(SSP_NTRN, name), \
+                c \
+            }
 
 /**
- *	This macro creates a node branch table. Use the 
+ *  \brief
+ *	This macro creates a node branch table. Use the
  *	'SSP_END_BR_TABLE' macro to terminate the branch table.
  *
- * 	\param name		node name.
+ *  \param name		node name.
  */
-
-#define SSP_CREATE_BR_TABLE( name )										\
-																		\
-								const SSP_BR_T name##_tbl[]={
+#define SSP_CREATE_BR_TABLE(name) \
+    const SSPBranch name##_tbl[]= \
+    {
 
 /**
- * 	\brief
+ *  \brief
  *	This macro defines a tree branch or node transition.
  *
  *	Example:
@@ -82,168 +80,168 @@
  *	SSP_CREATE_NORMAL_NODE( root );
  *	SSP_CREATE_BR_TABLE( root )
  *		{	"ok",			// pattern "ok"
- *			NULL, 			// branch action is not used
+ *			NULL,           // branch action is not used
  *			&node_ok	},	// next tree node
  *		{ "no", NULL, &node_no	},
  *	SSP_END_BR_TABLE
  *	\endcode
  *
  *	\sa
- *	SSP_BR_T structure definition for more information.
+ *	SSPBranch structure definition for more information.
  *
- * 	\param patt		pattern to search. String terminated in '\\0'
- * 	\param bract	pointer to action function. This function is invoked 
- * 					when the pattern is found. This argument is optional, 
- * 					thus it could be declared as NULL.
- * 	\param target	pointer to target node.
+ *  \param patt		pattern to search. String terminated in '\\0'
+ *  \param branchAction	pointer to action function. This function is invoked
+ *                  when the pattern is found. This argument is optional,
+ *                  thus it could be declared as NULL.
+ *  \param target	pointer to target node.
  */
-
-#define SSPBR( patt, bract, target )		\
-						{ (unsigned char*)patt, bract, target }
-
+#define SSPBR(patt, branchAction, target) \
+    {(unsigned char*)patt, branchAction, target}
 
 /**
+ *  \brief
  *	This macro is used to terminate a state transition table.
  */
-
-#define SSP_END_BR_TABLE		{ NULL, NULL, NULL }};
-
+#define SSP_END_BR_TABLE        {NULL, NULL, NULL}};
 
 /**@{
- *
- * 	Declares a previously created node to be used as a global object.  
+ *  \brief
+ *  Declares a previously created node to be used as a global object.
  */
-
-#define SSP_DCLR_NORMAL_NODE	extern const SSP_NNORM_T
-#define SSP_DCLR_TRN_NODE		extern const SSP_NTRN_T
-
+#define SSP_DCLR_NORMAL_NODE    extern const SSPNodeNormal
+#define SSP_DCLR_TRN_NODE       extern const SSPNodeTrn
 /*@}*/
 
-
+#if SSP_DEBUG == 1
 /**
+ *  \brief
  *	Defines SSP debug interface.
  */
-
-#define sspput_string(ch,x)		printf("%s",(x))
-#define sspput_char(ch,x)		putc((x),stdout)
-
-#if SSP_DEBUG == 1
-#define sspdprint(x)			print_format##x
+#define SSP_PUTS(ch,x)      printf("%s", (x))
+#define SSP_PUTC(ch,x)      putc((x), stdout)
+#define SSP_PRINT(x)        print_format##x
 #else
-#define sspdprint(x)
+#define SSP_PRINT(x)
 #endif
 
-
+/* -------------------------------- Constants ------------------------------ */
 enum
 {
-	SSP_NNORM,
-	SSP_NTRN
+    SSP_NNORM,
+    SSP_NTRN
 };
 
+typedef enum SSPResult
+{
+    SSP_MATCH,
+    SSP_UNMATCH,
+    SSP_INIT_SEARCH,
+    SSP_SEARCH_CONTINUES,
+    SSP_EQUAL_LAST_CHAR
+} SSPResult;
 
-typedef void ( *SSP_TRNA_T )( unsigned char c );
-typedef void ( *SSP_BRA_T )( unsigned char pos );
-
+/* ------------------------------- Data types ------------------------------ */
+typedef void (*SSPTrnAction)(unsigned char c);
+typedef void (*SSPBranchAction)(unsigned char pos);
 
 /**
- * 	\brief 
- * 	Maintains the basic information of a node.
+ *  \brief
+ *  Maintains the basic information of a node.
  */
-
-typedef struct ssp_base_t
+typedef struct SSPBase SSPBase;
+struct SSPBase
 {
-	/**	
-	 *	Contains the type of a particular node and can have 
-	 *	the following values:
-	 *
-	 *	- \b SSP_NNORM: 		normal node.
-	 *	- \b SSP_NTRN: 			transparent node.
-	 */
+    /**
+     *	Contains the type of a particular node and can have the following 
+     *	values:
+     *
+     *	- \b SSP_NNORM: normal node.
+     *	- \b SSP_NTRN:  transparent node.
+     */
+    unsigned char type;
 
-	unsigned char type;
+    /**
+     *	Points to node's branch table.
+     */
+    const struct SSPBranch *branchTbl;
 
-	/**	
-	 *	Points to node's branch table.
-	 */
-	
-	const struct ssp_br_t *brtbl;
-
-	/**	
-	 *	Node name. 
-	 *	String terminated in '\\0' that represents the name 
-	 *	of node. It's generally used for debugging.
-	 */
-
-	char *name;
-} SSP_BASE_T;
-
+    /**
+     *	Node name.
+     *	String terminated in '\\0' that represents the name of node. It's 
+     *	generally used for debugging.
+     */
+    char *name;
+};
 
 /**
- * 	\brief
- * 	Describes the tree branch or node transition. 
+ *  \brief
+ *  Describes the tree branch or node transition.
  */
-
-typedef struct ssp_br_t
+typedef struct SSPBranch SSPBranch;
+struct SSPBranch
 {
-	/**
-	 * 	Pattern to search.
-	 * 	String terminated in '\\0'.
-	 */
+    /**
+     *  Pattern to search.
+     *  String terminated in '\\0'.
+     */
+    unsigned char *patt;
 
-	unsigned char *patt;
+    /**
+     *  Points to action function.
+     *  This function is invoked when the pattern is found.
+     */
+    SSPBranchAction branchAction;
 
-	/**
-	 * 	Points to action function.
-	 * 	This function is invoked when the pattern is found.
-	 */
-	SSP_BRA_T bract;
+    /**
+     *  Points to target node.
+     */
+    const void *target;
+};
 
-	/**
-	 * 	Points to target node.
-	 */
-
-	const void *target;
-} SSP_BR_T;
-
-
-typedef struct ssp_nnorm_t
+typedef struct SSPNodeNormal SSPNodeNormal;
+struct SSPNodeNormal
 {
-	struct ssp_base_t base;
-} SSP_NNORM_T;
+    struct SSPBase base;
+};
 
-
-typedef struct ssp_ntrn_t
+typedef struct SSPNodeTrn SSPNodeTrn;
+struct SSPNodeTrn
 {
-	struct ssp_base_t base;
+    struct SSPBase base;
 
-	/**
-	 * 	Points to action function.
-	 * 	This function is invoked on arriving a input character.
-	 */
+    /**
+     *  Points to action function.
+     *  This function is invoked on arriving a input character.
+     */
+    SSPTrnAction trnAction;
+};
 
-	SSP_TRNA_T trnact;
-} SSP_NTRN_T;
-
-
+/* -------------------------- External variables --------------------------- */
+/* -------------------------- Function prototypes -------------------------- */
 /**
- * 	\brief
- * 	Initialization function.
+ *  \brief
+ *  Initialization function.
  *	Also, could be used to reset the parser.
  *
- * 	\param root		pointer to root node. The topmost node in a tree.
+ *  \param root		pointer to root node. The topmost node in a tree.
  */
-
-void ssp_init( const SSP_NNORM_T *root );
-
+void ssp_init(const SSPNodeNormal *root);
 
 /**
- * 	\brief
- * 	Find a character in the tree.
+ *  \brief
+ *  Find a character in the tree.
  *
- * 	\param c		input character.
+ *  \param      c input character.
+ *  \return     Result of search.
  */
+SSPResult ssp_doSearch(unsigned char c);
 
-void ssp_do_search( unsigned char c );
-
-
+/* -------------------- External C language linkage end -------------------- */
+#ifdef __cplusplus
+}
 #endif
+
+/* ------------------------------ Module end ------------------------------- */
+#endif
+
+/* ------------------------------ End of file ------------------------------ */
