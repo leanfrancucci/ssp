@@ -302,10 +302,18 @@ ssp_doSearch(unsigned char c)
                 {
                     ssp_match();
                 }
+                else
+                {
+                    result = SSP_SEARCH_CONTINUES;
+                }
             }
             else if (!ssp_isEqual(c))
             {
                 ssp_notMatch();
+            }
+            else
+            {
+                result = SSP_DUPLICATED_CHAR;
             }
             break;
         default:

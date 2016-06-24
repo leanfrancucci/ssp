@@ -137,7 +137,7 @@ typedef enum SSPResult
     SSP_UNMATCH,
     SSP_INIT_SEARCH,
     SSP_SEARCH_CONTINUES,
-    SSP_EQUAL_LAST_CHAR
+    SSP_DUPLICATED_CHAR
 } SSPResult;
 
 /* ------------------------------- Data types ------------------------------ */
