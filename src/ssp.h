@@ -29,10 +29,10 @@ extern "C" {
  *  \brief
  *	This macro creates a normal node.
  *
+ *  \param[in] name     node name. Represents a normal node structure.
+ *
  *	\note
  *	See SSPNodeNormal structure definition for more information.
- *
- *  \param name		node name. Represents a normal node structure.
  */
 #define SSP_CREATE_NORMAL_NODE(name) \
             extern const SSPBranch name##_tbl[]; \
@@ -45,12 +45,12 @@ extern "C" {
  *  \brief
  *	This macro creates a transparent node.
  *
+ *  \param[in] name		node name. Represents a transparent node structure.
+ *  \param[in] c		pointer to collection action. This argument is
+ *					    optional, thus it could be declared as NULL.
+ *
  *	\note
  *	See SSPNodeTrn structure definition for more information.
- *
- *  \param name		node name. Represents a transparent node structure.
- *  \param c		pointer to collection action. This argument is
- *					optional, thus it could be declared as NULL.
  */
 #define SSP_CREATE_TRN_NODE(name, c) \
             extern const SSPBranch name##_tbl[]; \
@@ -65,7 +65,7 @@ extern "C" {
  *	This macro creates a node branch table. Use the
  *	'SSP_END_BR_TABLE' macro to terminate the branch table.
  *
- *  \param name		node name.
+ *  \param name[in]		node name.
  */
 #define SSP_CREATE_BR_TABLE(name) \
     const SSPBranch name##_tbl[]= \
@@ -75,7 +75,13 @@ extern "C" {
  *  \brief
  *	This macro defines a tree branch or node transition.
  *
- *	Example:
+ *  \param patt[in]		pattern to search. String terminated in '\\0'
+ *  \param branchAction[in]	pointer to action function. This function is 
+ *                      invoked when the pattern is found. This argument is 
+ *                      optional, thus it could be declared as NULL.
+ *  \param target[in]	pointer to target node.
+ *
+ *  \usage
  *	\code
  *	SSP_CREATE_NORMAL_NODE( root );
  *	SSP_CREATE_BR_TABLE( root )
@@ -88,15 +94,9 @@ extern "C" {
  *
  *	\sa
  *	SSPBranch structure definition for more information.
- *
- *  \param patt		pattern to search. String terminated in '\\0'
- *  \param branchAction	pointer to action function. This function is invoked
- *                  when the pattern is found. This argument is optional,
- *                  thus it could be declared as NULL.
- *  \param target	pointer to target node.
  */
 #define SSPBR(patt, branchAction, target) \
-    {(unsigned char*)patt, branchAction, target}
+    {(unsigned char*)patt, branchAction, (SSPBase *)target}
 
 /**
  *  \brief
@@ -113,8 +113,7 @@ extern "C" {
 /*@}*/
 
 #if SSP_DEBUG == 1
-/**
- *  \brief
+/*
  *	Defines SSP debug interface.
  */
 #define SSP_PUTS(ch,x)      printf("%s", (x))
@@ -152,6 +151,8 @@ typedef struct SSPBase SSPBase;
 struct SSPBase
 {
     /**
+     *  \brief
+     *  Type of node.
      *	Contains the type of a particular node and can have the following 
      *	values:
      *
@@ -161,11 +162,13 @@ struct SSPBase
     unsigned char type;
 
     /**
+     *  \brief
      *	Points to node's branch table.
      */
     const struct SSPBranch *branchTbl;
 
     /**
+     *  \brief
      *	Node name.
      *	String terminated in '\\0' that represents the name of node. It's 
      *	generally used for debugging.
@@ -181,35 +184,47 @@ typedef struct SSPBranch SSPBranch;
 struct SSPBranch
 {
     /**
+     *  \brief
      *  Pattern to search.
      *  String terminated in '\\0'.
      */
     unsigned char *patt;
 
     /**
+     *  \brief
      *  Points to action function.
      *  This function is invoked when the pattern is found.
      */
     SSPBranchAction branchAction;
 
     /**
+     *  \brief
      *  Points to target node.
      */
-    const void *target;
+    const SSPBase *target;
 };
 
 typedef struct SSPNodeNormal SSPNodeNormal;
 struct SSPNodeNormal
 {
-    struct SSPBase base;
+    /**
+     *  \brief
+     *	Maintains the basic information of node.
+     */
+    SSPBase base;
 };
 
 typedef struct SSPNodeTrn SSPNodeTrn;
 struct SSPNodeTrn
 {
-    struct SSPBase base;
+    /**
+     *  \brief
+     *	Maintains the basic information of node.
+     */
+    SSPBase base;
 
     /**
+     *  \brief
      *  Points to action function.
      *  This function is invoked on arriving a input character.
      */
