@@ -22,6 +22,9 @@
     <Filter Include="tools\unity">
       <UniqueIdentifier>{e3aee547-fb12-4da1-b03c-6db96ab6957e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="tools\cmock">
+      <UniqueIdentifier>{8042d9bb-5fc6-4abd-b88c-742c3423f837}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\ssp.c">
@@ -41,6 +44,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\tools\unity\unity.c">
       <Filter>tools\unity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\stub\mocks\Mocktree_actions.c">
+      <Filter>tests\ssp\stub</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\tools\cmock\cmock.c">
+      <Filter>tools\cmock</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -67,6 +76,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\tools\unity\unity_internals.h">
       <Filter>tools\unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\cmock\cmock.h">
+      <Filter>tools\cmock</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\tools\cmock\cmock_internals.h">
+      <Filter>tools\cmock</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

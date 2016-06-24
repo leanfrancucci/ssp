@@ -23,10 +23,10 @@
 #define CTRN(x)             ((SSPNodeTrn*)(x))
 #define CNORM(x)            ((SSPNodeNormal*)(x))
 
-#define ssp_isMatch()       (*ppatt == '\0')
+#define ssp_isMatch()       (*pattern == '\0')
 #define ssp_initSearch()    state = SSP_INSEARCH; result = SSP_INIT_SEARCH
-#define ssp_isInPatt(x)     (*ppatt == (x))
-#define ssp_incPatt()       ++ppatt
+#define ssp_isInPatt(x)     (*pattern == (x))
+#define ssp_incPatt()       ++pattern
 
 /* ------------------------------- Constants ------------------------------- */
 enum
@@ -80,9 +80,9 @@ static const char *sspmap[] =
 /* ---------------------------- Local data types --------------------------- */
 /* ---------------------------- Global variables --------------------------- */
 /* ---------------------------- Local variables ---------------------------- */
-static const void *pnd;         /**	Points to current node */
-static const SSPBranch *pbr;    /** Points to current branch */
-static unsigned char *ppatt;    /** Points to current pattern */
+static const void *node;        /**	Points to current node */
+static const SSPBranch *branch; /** Points to current branch */
+static unsigned char *pattern;  /** Points to current pattern */
 static int state;               /**	Maintains the current state of parser */
 static int pos;                 /**	Current position in the pattern */
 static SSPResult result;        /** Search result */
@@ -138,10 +138,10 @@ printFormat(unsigned char out, char *fmt, ...)
 static int
 ssp_searchPatt(unsigned char c)
 {
-    for (pbr = CB(pnd)->branchTbl, ppatt = pbr->patt; ppatt != NULL;
-         ++pbr, ppatt = pbr->patt)
+    for (branch = CB(node)->branchTbl, pattern = branch->patt; pattern != NULL;
+         ++branch, pattern = branch->patt)
     {
-        if (*ppatt == c)
+        if (*pattern == c)
         {
             return SSP_FOUND;
         }
@@ -153,14 +153,14 @@ static void
 ssp_deliver(unsigned char c)
 {
 #if SSP_DEBUG == 1
-    if (CB(pnd)->type == SSP_NTRN)
+    if (CB(node)->type == SSP_NTRN)
     {
         SSP_PRINT((0, "\tDeliver input '%s' (%2d)\n", ssp_mapChar(c), c));
     }
 #endif
-    if ((CB(pnd)->type == SSP_NTRN) && CTRN(pnd)->trnAction)
+    if ((CB(node)->type == SSP_NTRN) && CTRN(node)->trnAction)
     {
-        (*CTRN(pnd)->trnAction)(c);
+        (*CTRN(node)->trnAction)(c);
     }
 }
 
@@ -176,14 +176,14 @@ ssp_deliver(unsigned char c)
 static void
 ssp_notMatch(void)
 {
-    if (CB(pnd)->type == SSP_NTRN)
+    if (CB(node)->type == SSP_NTRN)
     {
-        SSP_PRINT((0, "\tIn transparent node \"%s\"\n", CB(pnd)->name));
+        SSP_PRINT((0, "\tIn transparent node \"%s\"\n", CB(node)->name));
     }
     else
     {
         SSP_PRINT((0, "\tNot match. Changes to \"%s\" node\n",
-                   CB(pnd)->name));
+                   CB(node)->name));
     }
     state = SSP_IDLE;
     result = SSP_UNMATCH;
@@ -206,20 +206,20 @@ static void
 ssp_match(void)
 {
     SSP_PRINT((0, "\tFind pattern \"%s\" from node \"%s\"\n",
-               pbr->patt,
-               CB(pnd)->name));
-    if (pbr->branchAction)
+               branch->patt,
+               CB(node)->name));
+    if (branch->branchAction)
     {
-        (*pbr->branchAction)((unsigned char)(pos + 1));
+        (*branch->branchAction)((unsigned char)(pos + 1));
     }
 
     state = SSP_IDLE;
-    if (pbr->target != NULL)
+    if (branch->target != NULL)
     {
-        pnd = pbr->target;
+        node = branch->target;
     }
 
-    SSP_PRINT((0, "\tChange to node \"%s\"\n", CB(pnd)->name));
+    SSP_PRINT((0, "\tChange to node \"%s\"\n", CB(node)->name));
     result = SSP_MATCH;
 }
 
@@ -229,7 +229,7 @@ ssp_isEqual(unsigned char c)
 {
     int r;
 
-    r = (*(ppatt - 1) == c);
+    r = (*(pattern - 1) == c);
     if (r)
     {
         SSP_PRINT((0, "\tRepeat input (match pos = %2d)\n", pos));
@@ -238,15 +238,15 @@ ssp_isEqual(unsigned char c)
     return r;
 }
 #else
-#define ssp_isEqual(x)       (*(ppatt - 1) == (x))
+#define ssp_isEqual(x)       (*(pattern - 1) == (x))
 #endif
 
 /* ---------------------------- Global functions --------------------------- */
 void
 ssp_init(const SSPNodeNormal *root)
 {
-    pnd = root;
-    pbr = CB(pnd)->branchTbl;
+    node = root;
+    branch = CB(node)->branchTbl;
     state = SSP_IDLE;
 }
 
@@ -267,8 +267,8 @@ ssp_doSearch(unsigned char c)
                 pos = 0;
 
                 SSP_PRINT((0, "\tFind in pattern \"%s\" from node \"%s\"",
-                           pbr->patt,
-                           CB(pnd)->name));
+                           branch->patt,
+                           CB(node)->name));
                 SSP_PRINT((0, " (match pos = %2d)\n", pos));
 
                 ssp_incPatt();
@@ -293,8 +293,8 @@ ssp_doSearch(unsigned char c)
             {
                 ++pos;
                 SSP_PRINT((0, "\tFind in pattern \"%s\" from node \"%s\"",
-                           pbr->patt,
-                           CB(pnd)->name));
+                           branch->patt,
+                           CB(node)->name));
                 SSP_PRINT((0, " (match pos = %2d)\n", pos));
 
                 ssp_incPatt();

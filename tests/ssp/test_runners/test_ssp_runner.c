@@ -23,6 +23,12 @@ TEST_GROUP_RUNNER(ssp)
 	RUN_TEST_CASE(ssp, StartSearch);
 	RUN_TEST_CASE(ssp, FoundPattern);
 	RUN_TEST_CASE(ssp, FoundLongPattern);
+	RUN_TEST_CASE(ssp, RepeatsCharInPattern);
+	RUN_TEST_CASE(ssp, BreakSearchPattern);
+	RUN_TEST_CASE(ssp, OnFoundPatternCallsAction);
+	RUN_TEST_CASE(ssp, CallsActionInTransparentNode);
+	RUN_TEST_CASE(ssp, FoundPatternInTransparentNode);
+	RUN_TEST_CASE(ssp, TravelingDifferentNodeTypes);
 }
 
 /* ------------------------------ End of file ------------------------------ */

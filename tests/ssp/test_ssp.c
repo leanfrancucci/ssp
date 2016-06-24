@@ -9,107 +9,96 @@
 /* ----------------------------- Include files ----------------------------- */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "unity_fixture.h"
 #include "ssp.h"
+#include "tree_actions.h"
+#include "Mocktree_actions.h"
 
 /* ----------------------------- Local macros ------------------------------ */
-#define MAX_EXP_CHS     3
-
 /* ------------------------------- Constants ------------------------------- */
 /* ---------------------------- Local data types --------------------------- */
 /* ---------------------------- Global variables --------------------------- */
 TEST_GROUP(ssp);
 
 /* ---------------------------- Local variables ---------------------------- */
-static unsigned char buff[16], *pbuff;
-static int ixbuff;
 SSP_DCLR_NORMAL_NODE root, node_no, node_ok;
 SSP_DCLR_TRN_NODE node_trn;
 
+SSP_CREATE_NORMAL_NODE(root);
+SSP_CREATE_BR_TABLE(root)
+SSPBR("ok",     NULL,       &node_ok),
+SSPBR("no",     NULL,       &node_no),
+SSP_END_BR_TABLE
+
+SSP_CREATE_NORMAL_NODE(node_ok);
+SSP_CREATE_BR_TABLE(node_ok)
+SSPBR("frm",    pattFrm,    &node_trn),
+SSPBR("error",  NULL,       NULL),
+SSP_END_BR_TABLE
+
+SSP_CREATE_TRN_NODE(node_trn, collect);
+SSP_CREATE_BR_TABLE(node_trn)
+SSPBR("ok",     pattOk,     &root),
+SSPBR("+",      NULL,       &root),
+SSP_END_BR_TABLE
+
+SSP_CREATE_NORMAL_NODE(node_no);
+SSP_CREATE_BR_TABLE(node_no)
+SSPBR("+",      NULL,       &root),
+SSPBR("-",      pattFrm,    &node_trn),
+SSP_END_BR_TABLE
+
 /* ----------------------- Local function prototypes ----------------------- */
 /* ---------------------------- Local functions ---------------------------- */
-static void
-none(unsigned char pos)
+static SSPResult
+parseAndCheck(const char *str, int mode, SSPResult expectedResult)
 {
-	(void)pos;
+    SSPResult result;
+    const char *p;
+    int i;
+
+    for (i = strlen(str), p = str; i > 0; --i, ++p)
+    {
+        result = ssp_doSearch(*p);
+        if (mode == 1)
+        {
+            TEST_ASSERT_EQUAL(expectedResult, result);
+        }
+    }
+    return result;
 }
 
-static void
-patt_frm(unsigned char pos)
+static SSPResult
+parseString(const char *str)
 {
-	(void)pos;
-	pbuff = buff;
-	ixbuff = 0;
-	printf("\t%s: expected at least %d characters\n", __FUNCTION__, 
-														MAX_EXP_CHS);
+    return parseAndCheck(str, 0, 0);
 }
 
-static void
-patt_ok(unsigned char pos)
+static SSPResult
+parseStringInTransparentNode(const char *str)
 {
-	int i;
-
-	(void)pos;
-	printf("\t%s: #%d ch collected =", __FUNCTION__, ixbuff);
-
-	for (i = 0, pbuff = buff; i < ixbuff; ++i, ++pbuff)
-		printf(" %c", *pbuff);
-
-	putchar('\n');
+    return parseAndCheck(str, 1, SSP_UNMATCH);
 }
-
-void
-collect( unsigned char c )
-{
-	if (ixbuff < MAX_EXP_CHS)
-	{
-		printf("\t%s: collect[%d] = %c (%2d)\n", __FUNCTION__, 
-													ixbuff, c, c);
-		*pbuff++ = c;
-		++ixbuff;
-	}
-}
-
-/* ================================ Tree =================================== */
-SSP_CREATE_NORMAL_NODE( root );
-SSP_CREATE_BR_TABLE( root )
-	SSPBR( "ok",		NULL, 		&node_ok	),
-	SSPBR( "no",		NULL, 		&node_no	),
-SSP_END_BR_TABLE
-
-SSP_CREATE_NORMAL_NODE( node_ok );
-SSP_CREATE_BR_TABLE( node_ok )
-	SSPBR( "frm",		patt_frm, 	&node_trn	),
-	SSPBR( "error",		NULL, 		NULL 		),
-SSP_END_BR_TABLE
-
-SSP_CREATE_TRN_NODE( node_trn, collect );
-SSP_CREATE_BR_TABLE( node_trn )
-	SSPBR( "ok",		patt_ok, 	&root 		),
-	SSPBR( "+",			NULL, 		&root 		),
-SSP_END_BR_TABLE
-
-SSP_CREATE_NORMAL_NODE( node_no );
-SSP_CREATE_BR_TABLE( node_no )
-	SSPBR( "+",			NULL, 		&root 		),
-	SSPBR( "-",			patt_frm,	&node_trn	),
-SSP_END_BR_TABLE
 
 /* ---------------------------- Global functions --------------------------- */
 TEST_SETUP(ssp)
 {
     ssp_init(&root);
+    Mocktree_actions_Init();
 }
 
 TEST_TEAR_DOWN(ssp)
 {
+    Mocktree_actions_Verify();
+    Mocktree_actions_Destroy();
 }
 
 TEST(ssp, OutOfTree)
 {
     SSPResult result;
 
-	result = ssp_doSearch('\r');
+    result = ssp_doSearch('\r');
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
@@ -117,7 +106,7 @@ TEST(ssp, StartSearch)
 {
     SSPResult result;
 
-	result = ssp_doSearch('n');
+    result = ssp_doSearch('n');
     TEST_ASSERT_EQUAL(SSP_INIT_SEARCH, result);
 }
 
@@ -125,8 +114,8 @@ TEST(ssp, FoundPattern)
 {
     SSPResult result;
 
-	result = ssp_doSearch('n');
-	result = ssp_doSearch('o');
+    result = ssp_doSearch('n');
+    result = ssp_doSearch('o');
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
@@ -134,11 +123,86 @@ TEST(ssp, FoundLongPattern)
 {
     SSPResult result;
 
-	result = ssp_doSearch('o');
-	result = ssp_doSearch('k');
-	result = ssp_doSearch('e');
-	result = ssp_doSearch('r');
+    result = parseString("oker");
     TEST_ASSERT_EQUAL(SSP_SEARCH_CONTINUES, result);
+}
+
+TEST(ssp, RepeatsCharInPattern)
+{
+    SSPResult result;
+
+    result = parseString("oooo");
+    TEST_ASSERT_EQUAL(SSP_DUPLICATED_CHAR, result);
+}
+
+TEST(ssp, BreakSearchPattern)
+{
+    SSPResult result;
+
+    result = parseString("ol");
+    TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
+}
+
+TEST(ssp, OnFoundPatternCallsAction)
+{
+    SSPResult result;
+
+    pattFrm_Expect(3);
+    result = parseString("okfrm");
+    TEST_ASSERT_EQUAL(SSP_MATCH, result);
+}
+
+TEST(ssp, CallsActionInTransparentNode)
+{
+    SSPResult result;
+
+    pattFrm_Expect(3);
+    collect_Expect('0');
+    collect_Expect('1');
+
+    result = parseString("okfrm");
+    TEST_ASSERT_EQUAL(SSP_MATCH, result);
+
+    result = parseStringInTransparentNode("01");
+    TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
+}
+
+TEST(ssp, FoundPatternInTransparentNode)
+{
+    SSPResult result;
+
+    pattFrm_Expect(3);
+    collect_Expect('0');
+    collect_Expect('1');
+    collect_Expect('o');
+    collect_Expect('k');
+    pattOk_Expect(2);
+
+    result = parseString("okfrm");
+    result = parseStringInTransparentNode("01");
+    result = parseString("ok");
+    TEST_ASSERT_EQUAL(SSP_MATCH, result);
+}
+
+TEST(ssp, TravelingDifferentNodeTypes)
+{
+    SSPResult result;
+
+    pattFrm_Expect(1);
+    collect_Expect('a');
+    collect_Expect('b');
+    collect_Expect('c');
+    collect_Expect('+');
+    pattFrm_Expect(3);
+    collect_Expect('a');
+    collect_Expect('b');
+    collect_Expect('c');
+    collect_Expect('o');
+    collect_Expect('k');
+    pattOk_Expect(2);
+
+    result = parseString("\r\nno-abc+okfrmabcokno");
+    TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
 /* ------------------------------ End of file ------------------------------ */

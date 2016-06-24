@@ -52,7 +52,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;UNITY_INCLUDE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\src;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\..\tools\unity\fixture;$(ProjectDir)..\..\..\..\tools\unity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\src;$(ProjectDir)..\..\stub\mocks;$(ProjectDir)..\..\;$(ProjectDir)..\..\..\..\tools\unity\fixture;$(ProjectDir)..\..\..\..\tools\cmock;$(ProjectDir)..\..\..\..\tools\unity;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -78,14 +78,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\src\ssp.c" />
+    <ClCompile Include="..\..\..\..\tools\cmock\cmock.c" />
     <ClCompile Include="..\..\..\..\tools\unity\fixture\unity_fixture.c" />
     <ClCompile Include="..\..\..\..\tools\unity\unity.c" />
+    <ClCompile Include="..\..\stub\mocks\Mocktree_actions.c" />
     <ClCompile Include="..\..\test_runners\all_tests.c" />
     <ClCompile Include="..\..\test_runners\test_ssp_runner.c" />
     <ClCompile Include="..\..\test_ssp.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\ssp.h" />
+    <ClInclude Include="..\..\..\..\tools\cmock\cmock.h" />
+    <ClInclude Include="..\..\..\..\tools\cmock\cmock_internals.h" />
     <ClInclude Include="..\..\..\..\tools\unity\fixture\unity_fixture.h" />
     <ClInclude Include="..\..\..\..\tools\unity\fixture\unity_fixture_internals.h" />
     <ClInclude Include="..\..\..\..\tools\unity\fixture\unity_fixture_malloc_overrides.h" />
