@@ -54,7 +54,8 @@ SSP_END_BR_TABLE
 /* ----------------------- Local function prototypes ----------------------- */
 /* ---------------------------- Local functions ---------------------------- */
 static SSPResult
-parseAndCheck(const char *str, int mode, SSPResult expectedResult)
+parseAndCheck(SSP *const me, const char *str, int mode,
+              SSPResult expectedResult)
 {
     SSPResult result;
     const char *p;
@@ -62,7 +63,7 @@ parseAndCheck(const char *str, int mode, SSPResult expectedResult)
 
     for (i = strlen(str), p = str; i > 0; --i, ++p)
     {
-        result = ssp_doSearch(*p);
+        result = ssp_doSearch(me, *p);
         if (mode == 1)
         {
             TEST_ASSERT_EQUAL(expectedResult, result);
@@ -72,22 +73,15 @@ parseAndCheck(const char *str, int mode, SSPResult expectedResult)
 }
 
 static SSPResult
-parseString(const char *str)
+parseString(SSP *const me, const char *str)
 {
-    return parseAndCheck(str, 0, 0);
+    return parseAndCheck(me, str, 0, 0);
 }
 
 static SSPResult
-parseStringInTransparentNode(const char *str)
+parseStringInTransparentNode(SSP *const me, const char *str)
 {
-    return parseAndCheck(str, 1, SSP_UNMATCH);
-}
-
-static void
-clearSSPObj(SSP *const me)
-{
-    me->node = (const void *)0;
-    me->branch = (const SSPBranch *)0; 
+    return parseAndCheck(me, str, 1, SSP_UNMATCH);
 }
 
 /* ---------------------------- Global functions --------------------------- */
@@ -111,11 +105,21 @@ TEST(ssp, Initialize)
     TEST_ASSERT_EQUAL(result, 0);
 }
 
+TEST(ssp, WrongInitParameters)
+{
+    int result;
+
+    result = ssp_init((SSP *const)0, &root);
+    TEST_ASSERT_EQUAL(result, 1);
+    result = ssp_init(&sspObj, (const SSPNodeNormal *)0);
+    TEST_ASSERT_EQUAL(result, 1);
+}
+
 TEST(ssp, OutOfTree)
 {
     SSPResult result;
 
-    result = ssp_doSearch('\r');
+    result = ssp_doSearch(&sspObj, '\r');
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
@@ -123,7 +127,7 @@ TEST(ssp, StartSearch)
 {
     SSPResult result;
 
-    result = ssp_doSearch('n');
+    result = ssp_doSearch(&sspObj, 'n');
     TEST_ASSERT_EQUAL(SSP_INIT_SEARCH, result);
 }
 
@@ -131,8 +135,8 @@ TEST(ssp, FoundPattern)
 {
     SSPResult result;
 
-    result = ssp_doSearch('n');
-    result = ssp_doSearch('o');
+    result = ssp_doSearch(&sspObj, 'n');
+    result = ssp_doSearch(&sspObj, 'o');
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
@@ -140,7 +144,7 @@ TEST(ssp, FoundLongPattern)
 {
     SSPResult result;
 
-    result = parseString("oker");
+    result = parseString(&sspObj, "oker");
     TEST_ASSERT_EQUAL(SSP_SEARCH_CONTINUES, result);
 }
 
@@ -148,7 +152,7 @@ TEST(ssp, RepeatsCharInPattern)
 {
     SSPResult result;
 
-    result = parseString("oooo");
+    result = parseString(&sspObj, "oooo");
     TEST_ASSERT_EQUAL(SSP_DUPLICATED_CHAR, result);
 }
 
@@ -156,7 +160,7 @@ TEST(ssp, BreakSearchPattern)
 {
     SSPResult result;
 
-    result = parseString("ol");
+    result = parseString(&sspObj, "ol");
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
@@ -165,7 +169,7 @@ TEST(ssp, OnFoundPatternCallsAction)
     SSPResult result;
 
     pattFrm_Expect(3);
-    result = parseString("okfrm");
+    result = parseString(&sspObj, "okfrm");
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
@@ -177,10 +181,10 @@ TEST(ssp, CallsActionInTransparentNode)
     collect_Expect('0');
     collect_Expect('1');
 
-    result = parseString("okfrm");
+    result = parseString(&sspObj, "okfrm");
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 
-    result = parseStringInTransparentNode("01");
+    result = parseStringInTransparentNode(&sspObj, "01");
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
@@ -195,9 +199,9 @@ TEST(ssp, FoundPatternInTransparentNode)
     collect_Expect('k');
     pattOk_Expect(2);
 
-    result = parseString("okfrm");
-    result = parseStringInTransparentNode("01");
-    result = parseString("ok");
+    result = parseString(&sspObj, "okfrm");
+    result = parseStringInTransparentNode(&sspObj, "01");
+    result = parseString(&sspObj, "ok");
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
@@ -218,7 +222,7 @@ TEST(ssp, TravelingDifferentNodeTypes)
     collect_Expect('k');
     pattOk_Expect(2);
 
-    result = parseString("\r\nno-abc+okfrmabcokno");
+    result = parseString(&sspObj, "\r\nno-abc+okfrmabcokno");
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 

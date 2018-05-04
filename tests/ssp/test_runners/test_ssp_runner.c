@@ -20,6 +20,7 @@
 TEST_GROUP_RUNNER(ssp)
 {
 	RUN_TEST_CASE(ssp, Initialize);
+	RUN_TEST_CASE(ssp, WrongInitParameters);
 	RUN_TEST_CASE(ssp, OutOfTree);
 	RUN_TEST_CASE(ssp, StartSearch);
 	RUN_TEST_CASE(ssp, FoundPattern);

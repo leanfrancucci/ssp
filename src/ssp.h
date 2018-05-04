@@ -35,11 +35,11 @@ extern "C" {
  *	See SSPNodeNormal structure definition for more information.
  */
 #define SSP_CREATE_NORMAL_NODE(name) \
-            extern const SSPBranch name##_tbl[]; \
-            const SSPNodeNormal name = \
-            { \
-                MK_BASE(SSP_NNORM, name) \
-            }
+    extern const SSPBranch name##_tbl[]; \
+    const SSPNodeNormal name = \
+    { \
+        MK_BASE(SSP_NNORM, name) \
+    }
 
 /**
  *  \brief
@@ -53,12 +53,12 @@ extern "C" {
  *	See SSPNodeTrn structure definition for more information.
  */
 #define SSP_CREATE_TRN_NODE(name, c) \
-            extern const SSPBranch name##_tbl[]; \
-            const SSPNodeTrn name = \
-            { \
-                MK_BASE(SSP_NTRN, name), \
-                c \
-            }
+    extern const SSPBranch name##_tbl[]; \
+    const SSPNodeTrn name = \
+    { \
+        MK_BASE(SSP_NTRN, name), \
+        c \
+    }
 
 /**
  *  \brief
@@ -70,14 +70,13 @@ extern "C" {
 #define SSP_CREATE_BR_TABLE(name) \
     const SSPBranch name##_tbl[]= \
     {
-
 /**
  *  \brief
  *	This macro defines a tree branch or node transition.
  *
  *  \param patt[in]		pattern to search. String terminated in '\\0'
- *  \param branchAction[in]	pointer to action function. This function is 
- *                      invoked when the pattern is found. This argument is 
+ *  \param branchAction[in]	pointer to action function. This function is
+ *                      invoked when the pattern is found. This argument is
  *                      optional, thus it could be declared as NULL.
  *  \param target[in]	pointer to target node.
  *
@@ -130,14 +129,15 @@ enum
     SSP_NTRN
 };
 
-typedef enum SSPResult
+typedef enum SSPResult SSPResult;
+enum SSPResult
 {
     SSP_MATCH,
     SSP_UNMATCH,
     SSP_INIT_SEARCH,
     SSP_SEARCH_CONTINUES,
     SSP_DUPLICATED_CHAR
-} SSPResult;
+};
 
 /* ------------------------------- Data types ------------------------------ */
 typedef void (*SSPTrnAction)(unsigned char c);
@@ -153,7 +153,7 @@ struct SSPBase
     /**
      *  \brief
      *  Type of node.
-     *	Contains the type of a particular node and can have the following 
+     *	Contains the type of a particular node and can have the following
      *	values:
      *
      *	- \b SSP_NNORM: normal node.
@@ -170,7 +170,7 @@ struct SSPBase
     /**
      *  \brief
      *	Node name.
-     *	String terminated in '\\0' that represents the name of node. It's 
+     *	String terminated in '\\0' that represents the name of node. It's
      *	generally used for debugging.
      */
     char *name;
@@ -233,7 +233,7 @@ struct SSPNodeTrn
 
 /**
  *  \brief
- *  ...
+ *  Defines the data structure used to maintain information about the SSP.
  */
 typedef struct SSP SSP;
 struct SSP
@@ -243,7 +243,6 @@ struct SSP
     unsigned char *pattern;  /** Points to current pattern */
     int state;               /** Maintains the current state of parser */
     int pos;                 /** Current position in the pattern */
-    SSPResult result;        /** Search result */
 #if SSP_DEBUG == 1
     char strmap[2];
 #if SSP_PRINT_FORMAT == 1
@@ -260,7 +259,9 @@ struct SSP
  *	Also, could be used to reset the parser.
  *
  *  \param root		pointer to root node. The topmost node in a tree.
- *  \return         ...
+ *  \param[in] me   pointer to previously created SSP instance.
+ *  \return         '0' (true) if the instance was succesfully initialized,
+ *                  otherwise '1' (false).
  */
 int ssp_init(SSP *const me, const SSPNodeNormal *root);
 
@@ -268,10 +269,11 @@ int ssp_init(SSP *const me, const SSPNodeNormal *root);
  *  \brief
  *  Find a character in the tree.
  *
- *  \param      c input character.
- *  \return     Result of search.
+ *  \param c        input character.
+ *  \param[in] me   pointer to previously created SSP instance.
+ *  \return         Result of search.
  */
-SSPResult ssp_doSearch(unsigned char c);
+SSPResult ssp_doSearch(SSP *const me, unsigned char c);
 
 /* -------------------- External C language linkage end -------------------- */
 #ifdef __cplusplus

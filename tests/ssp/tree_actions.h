@@ -24,7 +24,7 @@ extern "C" {
 void none(unsigned char pos);
 void pattFrm(unsigned char pos);
 void pattOk(unsigned char pos);
-void collect( unsigned char c );
+void collect(unsigned char c);
 
 /* -------------------- External C language linkage end -------------------- */
 #ifdef __cplusplus
