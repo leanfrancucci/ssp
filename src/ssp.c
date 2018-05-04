@@ -242,12 +242,19 @@ ssp_isEqual(unsigned char c)
 #endif
 
 /* ---------------------------- Global functions --------------------------- */
-void
-ssp_init(const SSPNodeNormal *root)
+int
+ssp_init(SSP *const me, const SSPNodeNormal *root)
 {
-    node = root;
-    branch = CB(node)->branchTbl;
-    state = SSP_IDLE;
+    int result = 1;
+
+    if ((me != (SSP *)0) && (root != (const SSPNodeNormal *)0))
+    {
+        me->node = root;
+        me->branch = CB(root)->branchTbl;
+        me->state = SSP_IDLE;
+        result = 0;
+    }
+    return result;
 }
 
 SSPResult 

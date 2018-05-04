@@ -22,6 +22,8 @@
 TEST_GROUP(ssp);
 
 /* ---------------------------- Local variables ---------------------------- */
+static SSP sspObj;
+
 SSP_DCLR_NORMAL_NODE root, node_no, node_ok;
 SSP_DCLR_TRN_NODE node_trn;
 
@@ -81,10 +83,17 @@ parseStringInTransparentNode(const char *str)
     return parseAndCheck(str, 1, SSP_UNMATCH);
 }
 
+static void
+clearSSPObj(SSP *const me)
+{
+    me->node = (const void *)0;
+    me->branch = (const SSPBranch *)0; 
+}
+
 /* ---------------------------- Global functions --------------------------- */
 TEST_SETUP(ssp)
 {
-    ssp_init(&root);
+    ssp_init(&sspObj, &root);
     Mocktree_actions_Init();
 }
 
@@ -92,6 +101,14 @@ TEST_TEAR_DOWN(ssp)
 {
     Mocktree_actions_Verify();
     Mocktree_actions_Destroy();
+}
+
+TEST(ssp, Initialize)
+{
+    int result;
+
+    result = ssp_init(&sspObj, &root);
+    TEST_ASSERT_EQUAL(result, 0);
 }
 
 TEST(ssp, OutOfTree)

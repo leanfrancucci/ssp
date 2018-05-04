@@ -231,6 +231,27 @@ struct SSPNodeTrn
     SSPTrnAction trnAction;
 };
 
+/**
+ *  \brief
+ *  ...
+ */
+typedef struct SSP SSP;
+struct SSP
+{
+    const void *node;        /** Points to current node */
+    const SSPBranch *branch; /** Points to current branch */
+    unsigned char *pattern;  /** Points to current pattern */
+    int state;               /** Maintains the current state of parser */
+    int pos;                 /** Current position in the pattern */
+    SSPResult result;        /** Search result */
+#if SSP_DEBUG == 1
+    char strmap[2];
+#if SSP_PRINT_FORMAT == 1
+    char pfs[SSP_PRINT_FORMAT_SIZE];
+#endif
+#endif
+};
+
 /* -------------------------- External variables --------------------------- */
 /* -------------------------- Function prototypes -------------------------- */
 /**
@@ -239,8 +260,9 @@ struct SSPNodeTrn
  *	Also, could be used to reset the parser.
  *
  *  \param root		pointer to root node. The topmost node in a tree.
+ *  \return         ...
  */
-void ssp_init(const SSPNodeNormal *root);
+int ssp_init(SSP *const me, const SSPNodeNormal *root);
 
 /**
  *  \brief
