@@ -156,6 +156,10 @@ extern "C" {
 #endif
 
 /* -------------------------------- Constants ------------------------------ */
+#ifndef NULL
+#define NULL    (void *)0
+#endif
+
 enum
 {
     SSP_NNORM,
