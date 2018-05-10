@@ -278,7 +278,7 @@ SSPResult
 ssp_doSearch(SSP *const me, unsigned char c)
 {
     int r;
-    SSPResult result;        /** Search result */
+    SSPResult result = SSP_UNMATCH;        /** Search result */
 
     SSP_PRINT((0, "In: '%s' (%2d)\n", ssp_mapChar(me, c), c));
     switch (me->state)
