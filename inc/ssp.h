@@ -103,6 +103,7 @@ extern "C" {
 #define SSP_CREATE_BR_TABLE(name) \
     const SSPBranch name##_tbl[]= \
     {
+
 /**
  *  \brief
  *	This macro defines a tree branch or node transition.
@@ -143,17 +144,6 @@ extern "C" {
 #define SSP_DCLR_NORMAL_NODE    extern const SSPNodeNormal
 #define SSP_DCLR_TRN_NODE       extern const SSPNodeTrn
 /*@}*/
-
-#if SSP_DEBUG == 1
-/*
- *	Defines SSP debug interface.
- */
-#define SSP_PUTS(ch,x)      printf("%s", (x))
-#define SSP_PUTC(ch,x)      putc((x), stdout)
-#define SSP_PRINT(x)        print_format##x
-#else
-#define SSP_PRINT(x)
-#endif
 
 /* -------------------------------- Constants ------------------------------ */
 #ifndef NULL
@@ -275,17 +265,11 @@ struct SSPNodeTrn
 typedef struct SSP SSP;
 struct SSP
 {
-    const void *node;        /** Points to current node */
+    const SSPBase *node;     /** Points to current node */
     const SSPBranch *branch; /** Points to current branch */
     unsigned char *pattern;  /** Points to current pattern */
     int state;               /** Maintains the current state of parser */
     int pos;                 /** Current position in the pattern */
-#if SSP_DEBUG == 1
-    char strmap[2];
-#if SSP_PRINT_FORMAT == 1
-    char pfs[SSP_PRINT_FORMAT_SIZE];
-#endif
-#endif
 };
 
 /* -------------------------- External variables --------------------------- */

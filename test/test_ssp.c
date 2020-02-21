@@ -10,17 +10,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "unity_fixture.h"
+#include "unity.h"
 #include "ssp.h"
-#include "tree_actions.h"
-#include "Mocktree_actions.h"
+#include "Mock_tree_actions.h"
 
 /* ----------------------------- Local macros ------------------------------ */
 /* ------------------------------- Constants ------------------------------- */
 /* ---------------------------- Local data types --------------------------- */
 /* ---------------------------- Global variables --------------------------- */
-TEST_GROUP(ssp);
-
 /* ---------------------------- Local variables ---------------------------- */
 static SSP sspObj;
 
@@ -85,19 +82,22 @@ parseStringInTransparentNode(SSP *const me, const char *str)
 }
 
 /* ---------------------------- Global functions --------------------------- */
-TEST_SETUP(ssp)
+void
+setUp(void)
 {
     ssp_init(&sspObj, &root);
-    Mocktree_actions_Init();
+    Mock_tree_actions_Init();
 }
 
-TEST_TEAR_DOWN(ssp)
+void
+tearDown(void)
 {
-    Mocktree_actions_Verify();
-    Mocktree_actions_Destroy();
+    Mock_tree_actions_Verify();
+    Mock_tree_actions_Destroy();
 }
 
-TEST(ssp, Initialize)
+void
+test_Initialize(void)
 {
     int result;
 
@@ -105,17 +105,20 @@ TEST(ssp, Initialize)
     TEST_ASSERT_EQUAL(result, 0);
 }
 
-TEST(ssp, WrongInitParameters)
+void
+test_WrongInitParameters(void)
 {
     int result;
 
     result = ssp_init((SSP *const)0, &root);
     TEST_ASSERT_EQUAL(result, 1);
+
     result = ssp_init(&sspObj, (const SSPNodeNormal *)0);
     TEST_ASSERT_EQUAL(result, 1);
 }
 
-TEST(ssp, OutOfTree)
+void
+test_OutOfTree(void)
 {
     SSPResult result;
 
@@ -123,7 +126,8 @@ TEST(ssp, OutOfTree)
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
-TEST(ssp, StartSearch)
+void
+test_StartSearch(void)
 {
     SSPResult result;
 
@@ -131,7 +135,8 @@ TEST(ssp, StartSearch)
     TEST_ASSERT_EQUAL(SSP_INIT_SEARCH, result);
 }
 
-TEST(ssp, FoundPattern)
+void
+test_FoundPattern(void)
 {
     SSPResult result;
 
@@ -140,7 +145,8 @@ TEST(ssp, FoundPattern)
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
-TEST(ssp, FoundLongPattern)
+void
+test_FoundLongPattern(void)
 {
     SSPResult result;
 
@@ -148,7 +154,8 @@ TEST(ssp, FoundLongPattern)
     TEST_ASSERT_EQUAL(SSP_SEARCH_CONTINUES, result);
 }
 
-TEST(ssp, RepeatsCharInPattern)
+void
+test_RepeatsCharInPattern(void)
 {
     SSPResult result;
 
@@ -156,7 +163,8 @@ TEST(ssp, RepeatsCharInPattern)
     TEST_ASSERT_EQUAL(SSP_DUPLICATED_CHAR, result);
 }
 
-TEST(ssp, BreakSearchPattern)
+void
+test_BreakSearchPattern(void)
 {
     SSPResult result;
 
@@ -164,7 +172,8 @@ TEST(ssp, BreakSearchPattern)
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
-TEST(ssp, OnFoundPatternCallsAction)
+void
+test_OnFoundPatternCallsAction(void)
 {
     SSPResult result;
 
@@ -173,7 +182,8 @@ TEST(ssp, OnFoundPatternCallsAction)
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
-TEST(ssp, CallsActionInTransparentNode)
+void
+test_CallsActionInTransparentNode(void)
 {
     SSPResult result;
 
@@ -188,7 +198,8 @@ TEST(ssp, CallsActionInTransparentNode)
     TEST_ASSERT_EQUAL(SSP_UNMATCH, result);
 }
 
-TEST(ssp, FoundPatternInTransparentNode)
+void
+test_FoundPatternInTransparentNode(void)
 {
     SSPResult result;
 
@@ -205,7 +216,8 @@ TEST(ssp, FoundPatternInTransparentNode)
     TEST_ASSERT_EQUAL(SSP_MATCH, result);
 }
 
-TEST(ssp, TravelingDifferentNodeTypes)
+void
+test_TravelingDifferentNodeTypes(void)
 {
     SSPResult result;
 
